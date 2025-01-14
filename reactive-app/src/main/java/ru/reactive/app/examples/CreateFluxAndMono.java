@@ -1,12 +1,14 @@
-package ru.reactive.app;
+package ru.reactive.app.examples;
 
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.reactive.app.User;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-public class ExamplesCreateFluxAndMono {
+public class CreateFluxAndMono {
 
     public static void main(String[] args) {
         Flux<String> stream1 = Flux.just("Hello", "world");
@@ -29,10 +31,12 @@ public class ExamplesCreateFluxAndMono {
 
     // isValidSession вызывается только после подписки на Flux
     Mono<User> requestUserData(String sessionId) {
-        return Mono.defer(() ->
+        Mono<User> invalidUserSession = Mono.defer(() ->
                 isValidSession(sessionId)
                         ? Mono.fromCallable(() -> requestUser(sessionId))
                         : Mono.error(new RuntimeException("Invalid user session")));
+        Disposable subscribe = invalidUserSession.subscribe();
+        return invalidUserSession;
     }
 
     // isValidSession вызывается сразу
