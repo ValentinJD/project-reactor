@@ -23,6 +23,9 @@ public class CreateFluxAndMono {
         Flux<String> empty = Flux.empty();
         Flux<String> never = Flux.never();
         Mono<String> error = Mono.error(new RuntimeException("Unknown id"));
+        CustomSubscriber subscriber = new CustomSubscriber();
+        Flux<String> stream = Flux.just("Hello", "world", "!"); // (4)
+        stream.subscribe(subscriber);
     }
 
     private static String httpRequest() {
