@@ -8,6 +8,7 @@ import ru.reactive.app.User;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 public class Operators {
@@ -50,7 +51,7 @@ public class Operators {
                 .scan( // (4)
                         new int[bucketSize], // (4.1)
                         (acc, elem) -> { //
-                            acc[(int)(elem.getT1() % bucketSize)] = elem.getT2(); // (4.2)
+                            acc[(int) (elem.getT1() % bucketSize)] = elem.getT2(); // (4.2)
                             return acc; // (4.3)
                         })
                 .skip(bucketSize) // (5)
@@ -65,5 +66,31 @@ public class Operators {
                 Flux.range(4, 2),
                 Flux.range(6, 5)
         ).subscribe(e -> log.info("onNext: {}", e));
+
+        Flux.range(1, 13)
+                .buffer(4)
+                .subscribe(e -> log.info("onNext: {}", e));
+
+        Flux<Flux<Integer>> windowedFlux = Flux.range(101, 20) // (1)
+                .windowUntil(integer -> integer % 5 == 0, true); // (2)
+        windowedFlux.subscribe(window -> window // (3)
+                .collectList() // (4)
+                .subscribe(e -> log.info("window: {}", e)));
+
+        Flux.range(1, 7) // (1)
+                .groupBy(e -> e % 2 == 0 ? "Even" : "Odd") // (2)
+                .subscribe(groupFlux -> groupFlux
+                        .scan( // (4)
+                                new LinkedList<>(), // (4.1)
+                                (list, elem) -> {
+                                    list.add(elem); // (4.2)
+                                    if (list.size() > 2) {
+                                        list.remove(0); // (4.3)
+                                    }
+                                    return list;
+                                })
+                        .filter(arr -> !arr.isEmpty()) // (5)
+                        .subscribe(data -> // (6)
+                                log.info("{}: {}", groupFlux.key(), data)));
     }
 }
