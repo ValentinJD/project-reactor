@@ -23,7 +23,7 @@ public class ColdAndHotPublisher {
     void hot() {
         Flux<String> hotPublisher = Flux.just(UUID.randomUUID().toString())
                 .map(s -> {
-                    String upperCase = s.toUpperCase();
+                    String upperCase = s.toLowerCase();
                     log.info("upperCase: {}", s);
                     return upperCase;
                 });
@@ -31,5 +31,17 @@ public class ColdAndHotPublisher {
         hotPublisher.subscribe(e -> log.info("onNext: {}", e));
         hotPublisher.subscribe(e -> log.info("onNext: {}", e));
         log.info("Data was generated one for two subscribers");
+// если завернуть в defer то будет холодный Publisher
+        Flux<String> cold = Flux.defer(()->
+                Flux.just(UUID.randomUUID().toString())
+                .map(s -> {
+                    String upperCase = s.toLowerCase();
+                    log.info("upperCase: {}", s);
+                    return upperCase;
+                }));
+        log.info("data was generated so far");
+        cold.subscribe(e -> log.info("onNext: {}", e));
+        cold.subscribe(e -> log.info("onNext: {}", e));
+        log.info("Data was generated twice for two subscribers");
     }
 }
