@@ -16,8 +16,8 @@ public class Operators {
     static Logger log = org.slf4j.LoggerFactory.getLogger(Operators.class);
 
     public static void main(String[] args) throws InterruptedException {
-        ColdAndHotPublisher errorHandle = new ColdAndHotPublisher();
-        errorHandle.hot();
+        SharedPublish errorHandle = new SharedPublish();
+        errorHandle.share();
         Thread.sleep(4000);
     }
 
