@@ -16,6 +16,10 @@ public class Operators {
     static Logger log = org.slf4j.LoggerFactory.getLogger(Operators.class);
 
     public static void main(String[] args) {
+        e1();
+    }
+
+    private static void extracted() {
         Flux.range(2018, 5) // (1)
                 .timestamp() // (2)
                 .index() // (3)
@@ -98,5 +102,16 @@ public class Operators {
                 .delayElements(Duration.ofMillis(1))
                 .sample(Duration.ofMillis(20))
                 .subscribe(e -> log.info("onNext: {}", e));
+    }
+
+    //    Материализация и дематериализация сигналов
+    static void e1() {
+        Flux.range(1, 3)
+                .doOnNext(e -> log.info("data : {}", e))
+                .materialize()
+                .doOnNext(e -> log.info("signal: {}", e))
+                .dematerialize()
+                .collectList()
+                .subscribe(r-> log.info("result: {}", r));
     }
 }
