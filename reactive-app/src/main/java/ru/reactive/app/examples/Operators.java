@@ -10,13 +10,14 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 public class Operators {
     static Logger log = org.slf4j.LoggerFactory.getLogger(Operators.class);
 
-    public static void main(String[] args) {
-        e1();
+    public static void main(String[] args) throws InterruptedException {
+        new Generated().generate();
+        Thread.sleep(6000);
     }
 
     private static void extracted() {
@@ -112,6 +113,31 @@ public class Operators {
                 .doOnNext(e -> log.info("signal: {}", e))
                 .dematerialize()
                 .collectList()
-                .subscribe(r-> log.info("result: {}", r));
+                .subscribe(r -> log.info("result: {}", r));
     }
+
+    //Создание потоков данных программным способом
+    static void e2() {
+        Flux.push(emitter -> IntStream // (1)
+                        .range(2000, 3000) // (1.1)
+                        .forEach(emitter::next)) // (1.2)
+                .delayElements(Duration.ofMillis(1)) // (2)
+                .subscribe(e -> log.info("onNext: {}", e)); // (3)
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void e3() {
+        Flux.create(emitter -> {
+                    emitter.onDispose(() -> log.info("Disposed"));
+                    // отправить события объекту emitter
+                })
+                .subscribe(e -> log.info("onNext: {}", e));
+    }
+
+
 }
