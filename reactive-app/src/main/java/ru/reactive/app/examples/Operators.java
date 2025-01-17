@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.reactive.app.User;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -92,5 +93,10 @@ public class Operators {
                         .filter(arr -> !arr.isEmpty()) // (5)
                         .subscribe(data -> // (6)
                                 log.info("{}: {}", groupFlux.key(), data)));
+
+        Flux.range(1, 100)
+                .delayElements(Duration.ofMillis(1))
+                .sample(Duration.ofMillis(20))
+                .subscribe(e -> log.info("onNext: {}", e));
     }
 }
