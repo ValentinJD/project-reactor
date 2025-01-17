@@ -11,8 +11,10 @@ public class Subscribe {
 
     static Logger log = org.slf4j.LoggerFactory.getLogger(Subscribe.class);
 
-    public static void main(String[] args) {
-        cancel();
+    public static void main(String[] args) throws InterruptedException {
+        Transaction transaction = new Transaction(1);
+        transaction.updateData();
+        Thread.sleep(6000);
     }
 
     public static void subscribe() {
