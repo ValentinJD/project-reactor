@@ -29,6 +29,10 @@ public class ErrorHandle {
                                 .retryBackoff(5, Duration.ofMillis(100)) // (2.2)
                                 .timeout(Duration.ofSeconds(3)) // (2.3)
                                 .onErrorResume(e -> Flux.just("The Martian"))) // (2.4)
+                .onBackpressureBuffer(1)
+                .onBackpressureDrop()
+                .limitRate(1001)
+                .limitRequest(10)
                 .subscribe( // (3)
                         b -> log.info("onNext: {}", b),
                         e -> log.warn("onError: {}", e.getMessage()),
