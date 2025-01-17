@@ -16,7 +16,8 @@ public class Operators {
     static Logger log = org.slf4j.LoggerFactory.getLogger(Operators.class);
 
     public static void main(String[] args) throws InterruptedException {
-        new Generated().generate();
+        ErrorHandle errorHandle = new ErrorHandle();
+        errorHandle.call();
         Thread.sleep(6000);
     }
 
