@@ -1,12 +1,20 @@
 package ru.reactive.app.examples;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 
 @Slf4j
 public class Cache4 {
+
+    public static void main(String[] args) throws InterruptedException {
+        Cache4 errorHandle = new Cache4();
+        errorHandle.cash();
+        Thread.sleep(4000);
+    }
+
     void cash() {
         Flux<Integer> source = Flux.range(0, 2) // (1)
                 .doOnSubscribe(s ->
